@@ -8,6 +8,6 @@ dialog.allowsMultipleSelection = true
 guard dialog.runModal() == .OK else { exit(0) }
 
 for url in dialog.urls {
-    convert(path: url)
+	convert(path: url)
 }
 
