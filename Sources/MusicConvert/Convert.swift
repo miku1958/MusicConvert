@@ -8,6 +8,8 @@
 import Foundation
 import AVFoundation
 
+let allowedExtension = ["flac", "wav"]
+
 extension Array where Element == AVMutableMetadataItem {
 	mutating func addMetadata(identifier: AVMetadataIdentifier, value: NSCopying & NSObjectProtocol, dataType: CFString) {
 		let item = AVMutableMetadataItem()
@@ -18,7 +20,10 @@ extension Array where Element == AVMutableMetadataItem {
 	}
 }
 
-func convert(path: URL) {
+func convert(path: URL, to targetPath: URL) {
+	guard allowedExtension.contains(path.pathExtension) else {
+		return
+	}
 	let inputPath = path.path
 	let outoutPath = path.deletingPathExtension().appendingPathExtension("m4a").path
 	
@@ -100,5 +105,7 @@ func convert(path: URL) {
 	
 	try? FileManager.default.removeItem(atPath: outoutPath)
 	try? FileManager.default.moveItem(atPath: "\(outoutPath).temp", toPath: outoutPath)
-	
+
+	try? FileManager.default.createDirectory(at: targetPath.deletingLastPathComponent(), withIntermediateDirectories: true)
+	try? FileManager.default.moveItem(atPath: outoutPath, toPath: targetPath.standardizedFileURL.path)
 }
